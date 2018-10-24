@@ -6,12 +6,12 @@ def print_amounts(ml_total=100, aroma_percent=0.05, nicotin_per_ml=3,
   base_vg = (ml_total * target_vg) - (amount_shot+amount_aroma) / 2.0
   base_pg = amount_base - base_vg
   printf("Total amount: #{ml_total}ml\nBase Amount: %.2fml(total) %.2fml(VG) %.2fml(PG)\nAroma Amount: %.2fml\n"+
-         "Amount Shot: %.2fml", base_vg+base_pg, base_vg, base_pg, amount_aroma, amount_shot)
+         "Amount Shot: %.2fml\n", base_vg+base_pg, base_vg, base_pg, amount_aroma, amount_shot)
 end
 
-VALID = {'ml' => lambda{ |ml| Integer(ml,10)&.to_s==ml }, 'mg' => lambda { |mg| Integer(mg)&.to_s == mg },
-         'percent' => lambda { |pc| Float(pc)&.between?(0,1) }}
-CONVERT = {'ml' => lambda { |ml| Integer(ml, 10) }, 'mg' => lambda { |mg| Integer(mg, 10) },
+VALID = {'ml' => lambda{ |ml| Integer(ml,10)&.to_s==ml }, 'mg' => lambda { |mg| Float(mg)&.to_s == mg or Integer(mg,10)&.to_s == mg },
+	 'percent' => lambda { |pc| Float(pc)&.between?(0,1) }}
+CONVERT = {'ml' => lambda { |ml| Integer(ml, 10) }, 'mg' => lambda { |mg| Float(mg) },
            'percent' => lambda { |pc| Float(pc) }}
 
 def read_unit(name, unit)
@@ -31,4 +31,10 @@ def read_amounts
   shot_concentration = read_unit('shot nicotine content', 'mg')
   target_vg = read_unit('target VG', 'percent')
   print_amounts(ml_total, aroma_percent, nicotin_per_ml, shot_concentration, target_vg)
+end
+
+loop do
+  read_amounts
+  puts 'Press q to quit.'
+  break if $stdin.getc == 'q'
 end
